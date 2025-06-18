@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>To-Do List</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #1d2b64, #f8cdda);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px 60px;
+      position: relative;
+    }
+
+    /* Clock container */
+    #clock {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 10px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #5f0a87;
+      user-select: none;
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: 1px;
+      z-index: 1000;
+      width: 130px;
+      text-align: center;
+      box-sizing: border-box;
+      transition: background 0.3s ease;
+      cursor: default;
+    }
+    #clock:hover {
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+
+    .todo-container {
+      background: #ffffffdd;
+      padding: 30px 50px;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 850px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 35px;
+      backdrop-filter: saturate(180%) blur(10px);
+      -webkit-backdrop-filter: saturate(180%) blur(10px);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: 700;
+      font-size: 2.8rem;
+      color: #5f0a87;
+      margin-bottom: 6px;
+      user-select: none;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .input-group {
+      display: flex;
+      gap: 20px;
+    }
+
+    input[type="text"] {
+      flex-grow: 1;
+      padding: 14px 18px;
+      border: 2px solid #a4508b;
+      border-radius: 14px;
+      font-size: 1.2rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: inset 0 2px 6px #f0e6f7;
+      font-weight: 500;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #833ab4;
+      box-shadow: 0 0 12px #833ab4aa;
+      background: #faf7fc;
+    }
+
+    select {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #fff url("data:image/svg+xml,%3Csvg fill='none' stroke='%238338b4' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 18px 18px;
+      border: 2px solid #a4508b;
+      border-radius: 14px;
+      padding: 14px 48px 14px 18px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #5f0a87;
+      cursor: pointer;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    select:hover {
+      border-color: #833ab4;
+    }
+    select:focus {
+      outline: none;
+      border-color: #833ab4;
+      box-shadow: 0 0 12px #833ab4cc;
+      background: #faf7fc;
+    }
+
+    button.add-btn {
+      background: linear-gradient(90deg, #a4508b, #5f0a87);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 28px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.4s ease, transform 0.2s;
+      box-shadow: 0 6px 14px #8b3a9faa;
+      user-select: none;
+    }
+    button.add-btn:hover {
+      background: linear-gradient(90deg, #833ab4, #fd1d1d);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px #fd1d1dcc;
+    }
+    button.add-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 5px 10px #a4508b99;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #5f0a87;
+      border-bottom: 3px solid #a4508b;
+      padding-bottom: 8px;
+      margin-top: 40px;
+      user-select: none;
+      text-align: center;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-radius: 16px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      user-select: none;
+      transition: transform 0.15s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+    li:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+    }
+
+    li[data-color="white"] {
+      background: #fefefe;
+      color: #333;
+    }
+    li[data-color="green"] {
+      background: linear-gradient(135deg, #a8e063, #56ab2f);
+      color: #153d16;
+      text-shadow: 0 0 1px #ffffffaa;
+    }
+    li[data-color="yellow"] {
+      background: linear-gradient(135deg, #fffa7c, #fddb3a);
+      color: #4a3500;
+      text-shadow: 0 0 1px #fffde7cc;
+    }
+    li[data-color="red"] {
+      background: linear-gradient(135deg, #fc5c7d, #6a82fb);
+      color: #fff;
+      text-shadow: 0 0 3px #72142dcc;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    button.task-btn {
+      border: none;
+      padding: 8px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: background 0.3s ease, color 0.3s ease, transform 0.2s;
+      user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    button.task-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    button.mark-done-btn {
+      background: #00b894;
+      color: white;
+      box-shadow: 0 3px 8px #00a27acc;
+    }
+    button.mark-done-btn:hover {
+      background: #00997a;
+      box-shadow: 0 5px 14px #00785aee;
+    }
+
+    button.delete-btn {
+      background: #d63031;
+      color: white;
+      box-shadow: 0 3px 8px #a82221cc;
+    }
+    button.delete-btn:hover {
+      background: #a02020;
+      box-shadow: 0 5px 14px #700f0fdd;
+    }
+
+    #completedList li {
+      opacity: 0.65;
+      text-decoration: line-through;
+      cursor: default;
+      filter: brightness(0.85);
+      box-shadow: none;
+      transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    #completedList li:hover {
+      opacity: 1;
+      transform: scale(1.06);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+    }
+  </style>
+</head>
+<body>
+  <div id="clock">00:00:00</div>
+  <div class="todo-container">
+    <h2>My To-Do List</h2>
+
+    <div class="input-group">
+      <input type="text" id="taskInput" placeholder="Enter a new task" />
+      <select id="colorSelect" aria-label="Select task color">
+        <option value="white">White</option>
+        <option value="green">Green</option>
+        <option value="yellow">Yellow</option>
+        <option value="red">Red</option>
+      </select>
+      <button class="add-btn" onclick="addTask()" aria-label="Add task">Add Task</button>
+    </div>
+
+    <div class="section-title">Active Tasks</div>
+    <ul id="activeList"></ul>
+
+    <div class="section-title">Completed Tasks</div>
+    <ul id="completedList"></ul>
+  </div>
+  <script>
+    // Clock update function
+    function updateClock() {
+      const clock = document.getElementById('clock');
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      clock.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // Initial call
+
+    function createTaskElement(text, color, isCompleted = false) {
+      const li = document.createElement("li");
+      li.textContent = text;
+      li.setAttribute("data-color", color);
+  
+      // Button group
+      const btnGroup = document.createElement("div");
+      btnGroup.className = "btn-group";
+  
+      // Only add "Mark Done" if it's not already completed
+      if (!isCompleted) {
+        const doneBtn = document.createElement("button");
+        doneBtn.textContent = "Mark Done";
+        doneBtn.className = "task-btn mark-done-btn";
+        doneBtn.onclick = () => markAsDone(li);
+        btnGroup.appendChild(doneBtn);
+      }
+  
+      // Delete button
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.className = "task-btn delete-btn";
+      delBtn.onclick = () => deleteTask(li);
+  
+      btnGroup.appendChild(delBtn);
+      li.appendChild(btnGroup);
+  
+      return li;
+    }
+  
+    function addTask() {
+      const taskInput = document.getElementById("taskInput");
+      const taskText = taskInput.value.trim();
+      const color = document.getElementById("colorSelect").value;
+  
+      if (!taskText) {
+        alert("Please enter a task.");
+        return;
+      }
+  
+      const taskElement = createTaskElement(taskText, color, false);
+      document.getElementById("activeList").appendChild(taskElement);
+      taskInput.value = "";
+      taskInput.focus();
+      saveTasks();
+    }
+  
+    function markAsDone(taskElement) {
+      const btnGroup = taskElement.querySelector(".btn-group");
+      const doneBtn = btnGroup.querySelector(".mark-done-btn");
+      if (doneBtn) doneBtn.remove();
+      document.getElementById("completedList").appendChild(taskElement);
+      saveTasks();
+    }
+  
+    function deleteTask(taskElement) {
+      taskElement.remove();
+      saveTasks();
+    }
+  
+    function saveTasks() {
+      const activeList = document.getElementById("activeList").children;
+      const completedList = document.getElementById("completedList").children;
+  
+      const tasks = {
+        active: [],
+        completed: []
+      };
+  
+      for (const item of activeList) {
+        tasks.active.push({
+          text: item.childNodes[0].nodeValue.trim(),
+          color: item.getAttribute("data-color")
+        });
+      }
+  
+      for (const item of completedList) {
+        tasks.completed.push({
+          text: item.childNodes[0].nodeValue.trim(),
+          color: item.getAttribute("data-color")
+        });
+      }
+  
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+  
+    function loadTasks() {
+      const saved = localStorage.getItem("tasks");
+      if (!saved) return;
+  
+      const { active, completed } = JSON.parse(saved);
+  
+      active.forEach(task => {
+        const li = createTaskElement(task.text, task.color, false);
+        document.getElementById("activeList").appendChild(li);
+      });
+  
+      completed.forEach(task => {
+        const li = createTaskElement(task.text, task.color, true);
+        document.getElementById("completedList").appendChild(li);
+      });
+    }
+  
+    // Load tasks on page load
+    window.onload = () => {
+      loadTasks();
+      updateClock();
+    };
+  </script>
+</body>
+</html>
